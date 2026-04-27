@@ -474,5 +474,48 @@
             </select>
     </div>
 </div>
+<div id="page-dashboard" class="page active">
+    <div class="hero-band">
+        <div class="hero-left">
+            <div class="hero-eyebrow">NIMHANS GENETICS</div>
+            <h1 class="hero-title">Clinical Insights</h1>
+            <p class="hero-sub">Real-time genomic data visualization for the Epilepsy Registry.</p>
+        </div>
+        <div class="dashboard-filters">
+            <select id="dash-gene-filter" class="glass-select" onchange="updateDashboardFilters()">
+                <option value="">All Genes</option>
+            </select>
+            <select id="dash-disease-filter" class="glass-select" onchange="updateDashboardFilters()">
+                <option value="">All Diseases</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="kpi-row">
+        <div class="kpi gold">
+            <div class="kpi-num" id="stat-total-patients">0</div>
+            <div class="kpi-lbl">Total Patients</div>
+        </div>
+        <div class="kpi blue">
+            <div class="kpi-num" id="stat-pathogenic">0</div>
+            <div class="kpi-lbl">Pathogenic</div>
+        </div>
+        <div class="kpi green">
+            <div class="kpi-num" id="stat-yield">0%</div>
+            <div class="kpi-lbl">Diagnostic Yield</div>
+        </div>
+    </div>
+
+    <div class="charts-grid-2">
+        <div class="chart-card glass">
+            <div class="chart-title">Variant Classification</div>
+            <div class="chart-host"><canvas id="chart-classification"></canvas></div>
+        </div>
+        <div class="chart-card glass">
+            <div class="chart-title">Gene Distribution (Top 10)</div>
+            <div class="chart-host"><canvas id="chart-genes"></canvas></div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
