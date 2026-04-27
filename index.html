@@ -1,171 +1,364 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NIMHANS — Genetics in Epilepsy Registry</title>
-    <link rel="stylesheet" href="css/style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NIMHANS — Genetics in Epilepsy Registry</title>
+<link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
 <div id="login-screen">
-    <div class="login-box">
-        <img id="login-logo" class="login-logo" alt="NIMHANS Logo">
-        <div class="login-title">Genetics in Epilepsy</div>
-        <div class="login-sub">NIMHANS · National Registry System · Bengaluru</div>
-        <div class="form-group">
-            <label>User ID</label>
-            <input type="text" id="login-id" placeholder="Enter your User ID" autocomplete="username">
-        </div>
-        <div class="form-group">
-            <label>Password</label>
-            <input type="password" id="login-pw" placeholder="Enter your password" autocomplete="current-password">
-        </div>
-        <button class="btn-login" onclick="doLogin()">Sign In →</button>
-        <div class="login-err hidden" id="login-err">Invalid credentials. Please try again.</div>
-    </div>
+<div class="login-box">
+  <img id="login-logo" class="login-logo" alt="NIMHANS Logo">
+  <div class="login-title">Genetics in Epilepsy</div>
+  <div class="login-sub">NIMHANS · National Registry System · Bengaluru</div>
+  <div class="form-group">
+    <label>User ID</label>
+    <input type="text" id="login-id" placeholder="Enter your User ID" autocomplete="username">
+  </div>
+  <div class="form-group">
+    <label>Password</label>
+    <input type="password" id="login-pw" placeholder="Enter your password" autocomplete="current-password">
+  </div>
+  <button class="btn-login" onclick="doLogin()">Sign In →</button>
+  <div class="login-err hidden" id="login-err">Invalid credentials. Please try again.</div>
+</div>
 </div>
 
 <div id="app" class="hidden">
-    <div class="sidebar">
-        <div class="sb-header">
-            <img id="sb-logo" class="sb-logo" alt="NIMHANS">
-            <div class="sb-title">Genetics<br>in Epilepsy</div>
+  <div class="sidebar">
+    <div class="sb-header">
+      <img id="sb-logo" class="sb-logo" alt="NIMHANS">
+      <div class="sb-title">Genetics<br>in Epilepsy</div>
+    </div>
+    <div class="sb-nav">
+      <div class="nav-item active" onclick="showPage('dashboard',this)"><span class="nav-icon">📊</span> Dashboard</div>
+      <div class="nav-item" onclick="showPage('patients',this)"><span class="nav-icon">👥</span> Patient Registry</div>
+      <div class="nav-item" onclick="showPage('upload',this)"><span class="nav-icon">📤</span> Upload Reports</div>
+      <div class="nav-item" onclick="showPage('variants',this)"><span class="nav-icon">🧬</span> Genetic Variants</div>
+      <div class="nav-item" onclick="showPage('users',this)" id="nav-users"><span class="nav-icon">⚙️</span> User Management</div>
+    </div>
+    <div class="sb-footer">
+      <div class="sb-user">
+        <div class="user-av" id="sb-av">AD</div>
+        <div class="user-info">
+          <div class="user-name" id="sb-name">Administrator</div>
+          <div class="user-role" id="sb-role">Admin</div>
         </div>
-        <div class="sb-nav">
-            <div class="nav-item active" onclick="showPage('dashboard',this)"><span class="nav-icon">📊</span> Dashboard</div>
-            <div class="nav-item" onclick="showPage('patients',this)"><span class="nav-icon">👥</span> Patient Registry</div>
-            <div class="nav-item" onclick="showPage('upload',this)"><span class="nav-icon">📤</span> Upload Patient</div>
-            <div class="nav-item" onclick="showPage('variants',this)"><span class="nav-icon">🧬</span> Genetic Variants</div>
-            <div class="nav-item" onclick="showPage('users',this)" id="nav-users"><span class="nav-icon">⚙️</span> User Management</div>
+        <button class="btn-logout" onclick="doLogout()">Exit</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-content">
+
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <div class="page-header">
+        <h1>Clinical Dashboard</h1>
+        <p>Genetics in Epilepsy · NIMHANS Registry Overview</p>
+      </div>
+      <div class="stat-grid">
+        <div class="stat-card blue"><div class="stat-val" id="stat-total">0</div><div class="stat-label">Total Patients</div><div class="stat-icon">👥</div></div>
+        <div class="stat-card gold"><div class="stat-val" id="stat-pos">0</div><div class="stat-label">Positive Findings</div><div class="stat-icon">🧬</div></div>
+        <div class="stat-card green"><div class="stat-val" id="stat-genes">0</div><div class="stat-label">Unique Genes</div><div class="stat-icon">🔬</div></div>
+        <div class="stat-card purple"><div class="stat-val" id="stat-path">0</div><div class="stat-label">Pathogenic Variants</div><div class="stat-icon">⚠️</div></div>
+      </div>
+      <div class="charts-grid">
+        <div class="chart-card"><div class="chart-title">ACMG Classification</div><div id="chart-class"></div></div>
+        <div class="chart-card"><div class="chart-title">Top Genes Detected</div><div id="chart-genes"></div></div>
+        <div class="chart-card"><div class="chart-title">Zygosity Distribution</div><div id="chart-zyg"></div></div>
+        <div class="chart-card"><div class="chart-title">Inheritance Mode</div><div id="chart-inh"></div></div>
+      </div>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+          <div style="font-size:14px;font-weight:600;color:var(--nim-text)">Recent Entries</div>
+          <button class="btn btn-primary btn-sm" onclick="showPage('patients',document.querySelector('[onclick*=patients]'))">View All →</button>
         </div>
-        <div class="sb-footer">
-            <div class="sb-user">
-                <div class="user-av" id="sb-av">AD</div>
-                <div class="user-info">
-                    <div class="user-name" id="sb-name">Administrator</div>
-                    <div class="user-role" id="sb-role">Admin</div>
-                </div>
-                <button class="btn-logout" onclick="doLogout()">Exit</button>
-            </div>
+        <div class="tbl-wrap">
+          <table class="data-tbl"><thead><tr><th>Cat.</th><th>Patient</th><th>N Num</th><th>Gene</th><th>Classification</th><th>Variant</th></tr></thead><tbody id="recent-body"></tbody></table>
         </div>
+      </div>
     </div>
 
-    <div class="main-content">
-
-        <div id="page-dashboard" class="page active">
-            <div class="hero-band">
-                <div class="hero-left">
-                    <div class="hero-eyebrow">NIMHANS GENETICS</div>
-                    <h1 class="hero-title">Clinical Insights</h1>
-                    <p class="hero-sub">Real-time genomic data visualization for the Epilepsy Registry.</p>
-                </div>
-                <div class="dashboard-filters">
-                    <select id="dash-gene-filter" class="glass-select" onchange="updateDashboardFilters()">
-                        <option value="">All Genes</option>
-                    </select>
-                    <select id="dash-disease-filter" class="glass-select" onchange="updateDashboardFilters()">
-                        <option value="">All Diseases</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="kpi-row">
-                <div class="kpi gold">
-                    <div class="kpi-num" id="stat-total-patients">0</div>
-                    <div class="kpi-lbl">Total Patients</div>
-                </div>
-                <div class="kpi blue">
-                    <div class="kpi-num" id="stat-pathogenic">0</div>
-                    <div class="kpi-lbl">Pathogenic</div>
-                </div>
-                <div class="kpi green">
-                    <div class="kpi-num" id="stat-yield">0%</div>
-                    <div class="kpi-lbl">Diagnostic Yield</div>
-                </div>
-            </div>
-
-            <div class="charts-grid-2">
-                <div class="chart-card glass">
-                    <div class="chart-title">Variant Classification</div>
-                    <div class="chart-host"><canvas id="chart-classification"></canvas></div>
-                </div>
-                <div class="chart-card glass">
-                    <div class="chart-title">Gene Distribution (Top 10)</div>
-                    <div class="chart-host"><canvas id="chart-genes"></canvas></div>
-                </div>
-            </div>
+    <!-- PATIENTS -->
+    <div class="page" id="page-patients">
+      <div class="page-header">
+        <h1>Patient Registry</h1>
+        <p>Search, view, and manage patient genetic records (all 85 data fields)</p>
+      </div>
+      <div class="search-bar">
+        <input class="search-input" type="text" placeholder="🔍  Search by name, N Num, or UHID..." id="pt-search" oninput="filterPatients()">
+        <select class="filter-sel" id="pt-cat-filter" onchange="filterPatients()"><option value="">All Categories</option><option>N1</option><option>N2</option><option>N3</option><option>N5</option></select>
+        <select class="filter-sel" id="pt-sex-filter" onchange="filterPatients()"><option value="">All Genders</option><option>Male</option><option>Female</option></select>
+        <select class="filter-sel" id="pt-class-filter" onchange="filterPatients()"><option value="">All Classifications</option><option>Pathogenic</option><option>Likely Pathogenic</option><option>VUS</option><option>Likely Benign</option><option>Benign</option></select>
+        <button class="btn btn-primary" onclick="openAddPatient()">+ Add Patient</button>
+      </div>
+      <div class="card">
+        <div class="tbl-wrap">
+          <table class="data-tbl"><thead><tr><th>Category</th><th>Patient Name</th><th>N Num</th><th>UHID</th><th>Age</th><th>Sex</th><th>Gene</th><th>Classification</th><th>Actions</th></tr></thead><tbody id="pt-body"></tbody></table>
         </div>
-
-        <div class="page" id="page-patients">
-            <div class="page-header">
-                <h1>Patient Registry</h1>
-                <p>Search and manage patient rows · <span id="pt-count">0</span> shown</p>
-            </div>
-            <div class="search-bar">
-                <input class="search-input" type="text" placeholder="🔍 Search name, N Num, or gene…" id="pt-search" oninput="filterPatients()">
-                <select class="filter-sel" id="pt-cat-filter" onchange="filterPatients()">
-                    <option value="">All Categories</option>
-                    <option>N1</option><option>N2</option><option>N3</option><option>N5</option>
-                </select>
-                <button class="btn btn-primary" onclick="openAddPatient()">+ Add Patient</button>
-            </div>
-            <div class="card">
-                <div class="tbl-wrap">
-                    <table class="data-tbl">
-                        <thead>
-                            <tr><th>Category</th><th>Patient Name</th><th>N Num</th><th>UHID</th><th>Age</th><th>Sex</th><th>Gene</th><th>Classification</th><th>Actions</th></tr>
-                        </thead>
-                        <tbody id="pt-body"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <div class="page" id="page-upload">
-            <div class="page-header">
-                <h1>Upload Patient Records</h1>
-                <p>Drop NIMHANS Excel templates or clinical reports for processing.</p>
-            </div>
-            <div class="card upload-card">
-                <div class="upload-bar">
-                    <button class="btn btn-warn" onclick="wipeAndReloadSeed()">♻ Wipe DB & Reload Cohort</button>
-                </div>
-                <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-inp').click()">
-                    <div class="drop-icon">📁</div>
-                    <div class="drop-text">Drop PDF / Excel documents here</div>
-                    <input type="file" id="file-inp" multiple style="display:none" onchange="handleFiles(this.files)">
-                </div>
-            </div>
-        </div>
-
-        <div class="page" id="page-variants">
-            <div class="page-header">
-                <h1>Genetic Variants</h1>
-                <p>Global view of detected variants · <span id="var-count">0</span> rows</p>
-            </div>
-            <div class="card">
-                <div class="tbl-wrap">
-                    <table class="data-tbl">
-                        <thead>
-                            <tr><th>Cat.</th><th>Patient Name</th><th>N Num</th><th>Gene</th><th>Variant</th><th>Classification</th><th>Disease</th><th>Test Type</th></tr>
-                        </thead>
-                        <tbody id="var-body"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <div class="page" id="page-users">
-            <div class="page-header"><h1>User Management</h1></div>
-            <div id="user-list"></div>
-        </div>
-
+      </div>
     </div>
+
+    <!-- UPLOAD -->
+    <div class="page" id="page-upload">
+      <div class="page-header">
+        <h1>Upload Reports</h1>
+        <p>Upload PDF / Word documents for AI-assisted clinical data extraction</p>
+      </div>
+      <div class="card" style="margin-bottom:20px">
+        <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;background:var(--nim-card);border:1px solid var(--nim-border);border-radius:10px;padding:14px 18px">
+          <span style="font-size:13px;font-weight:600;color:var(--nim-gold);white-space:nowrap">📂 Category:</span>
+          <select class="filter-sel" id="upload-category" style="min-width:160px">
+            <option value="">-- Select Category --</option>
+            <option value="N1">N1</option>
+            <option value="N2">N2</option>
+            <option value="N3">N3</option>
+            <option value="N5">N5</option>
+          </select>
+          <span style="font-size:12px;color:var(--nim-muted)">Select the registry category before uploading documents</span>
+        </div>
+        <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-inp').click()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleDrop(event)">
+          <div class="drop-icon">📁</div>
+          <div class="drop-text">Drop PDF or Word files here</div>
+          <div class="drop-sub">or click to browse · Supports .pdf, .docx, .doc</div>
+          <input type="file" id="file-inp" multiple accept=".pdf,.docx,.doc" style="display:none" onchange="handleFiles(this.files)">
+        </div>
+        <div id="file-list" style="margin-top:12px"></div>
+        <div id="extract-btn-wrap" class="hidden" style="margin-top:16px;display:flex;gap:12px;align-items:center">
+          <button class="btn btn-primary" onclick="startExtraction()">🔍 Extract Data with AI</button>
+          <span style="font-size:13px;color:var(--nim-muted)">AI will extract all genetic and clinical fields automatically</span>
+        </div>
+      </div>
+      <div id="extraction-results" class="hidden">
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+            <div><div style="font-size:16px;font-weight:700;color:var(--nim-text)">Extracted Patient Records</div><div style="font-size:13px;color:var(--nim-muted);margin-top:4px">Review before saving to registry</div></div>
+            <button class="btn btn-primary" onclick="saveExtracted()">💾 Save to Registry</button>
+          </div>
+          <div class="tbl-wrap">
+            <table class="data-tbl"><thead><tr><th>Category</th><th>Patient</th><th>N Num</th><th>Gene</th><th>Variant</th><th>Classification</th><th>Disease</th><th>Status</th></tr></thead><tbody id="ext-body"></tbody></table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VARIANTS -->
+    <div class="page" id="page-variants">
+      <div class="page-header">
+        <h1>Genetic Variants</h1>
+        <p>All detected genetic variants across the registry</p>
+      </div>
+      <div class="search-bar">
+        <input class="search-input" type="text" placeholder="🔍  Search gene, variant, disease..." id="var-search" oninput="filterVariants()">
+        <select class="filter-sel" id="var-cat-filter" onchange="filterVariants()"><option value="">All Categories</option><option>N1</option><option>N2</option><option>N3</option><option>N5</option></select>
+        <select class="filter-sel" id="var-class-filter" onchange="filterVariants()"><option value="">All Classifications</option><option>Pathogenic</option><option>Likely Pathogenic</option><option>VUS</option><option>Likely Benign</option><option>Benign</option></select>
+        <select class="filter-sel" id="var-test-filter" onchange="filterVariants()"><option value="">All Test Types</option><option>WES</option><option>WGS</option><option>Gene Panel</option><option>Sanger</option></select>
+      </div>
+      <div class="card">
+        <div class="tbl-wrap">
+          <table class="data-tbl"><thead><tr><th>Category</th><th>Patient</th><th>N Num</th><th>Gene (Transcript)</th><th>Location</th><th>Variant</th><th>Zygosity</th><th>Classification</th><th>Disease</th><th>OMIM</th><th>Inheritance</th></tr></thead><tbody id="var-body"></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- USERS -->
+    <div class="page" id="page-users">
+      <div class="page-header">
+        <h1>User Management</h1>
+        <p>Manage system access and role permissions</p>
+      </div>
+      <div style="display:flex;justify-content:flex-end;margin-bottom:16px">
+        <button class="btn btn-primary" onclick="showAddUser()">+ Add User</button>
+      </div>
+      <div id="user-list"></div>
+    </div>
+
+  </div>
 </div>
 
-<div class="mobile-nav">
-    <div class="nav-item" onclick="showPage('dashboard')"><span class="nav-icon">📊</span><span>Dashboard</span></div>
-    <div class="nav-item" onclick="showPage('variants')"><span class="nav-icon">🧬</span><span>Genetics</span></div>
-    <div class="nav-item" onclick="showPage('upload')"><span class="nav-icon">📥</span><span>Upload</span></div>
+<!-- PATIENT DETAIL MODAL -->
+<div class="modal-overlay hidden" id="pt-modal">
+<div class="modal-box">
+  <div class="modal-header">
+    <div><div class="modal-title" id="modal-name">Patient</div><div style="color:rgba(255,255,255,.7);font-size:13px;margin-top:4px" id="modal-sub"></div></div>
+    <button class="modal-close" onclick="closeModal('pt-modal')">✕</button>
+  </div>
+  <div class="modal-body" id="modal-body"></div>
 </div>
+</div>
+
+<!-- ADD/EDIT PATIENT MODAL -->
+<div class="modal-overlay hidden" id="add-modal">
+<div class="modal-box" style="width:920px">
+  <div class="modal-header">
+    <div class="modal-title" id="add-modal-title">Add Patient Record</div>
+    <button class="modal-close" onclick="closeModal('add-modal')">✕</button>
+  </div>
+  <div class="modal-body">
+    <div class="tab-bar">
+      <div class="tab active" onclick="switchTab(0,this)">Demographics</div>
+      <div class="tab" onclick="switchTab(1,this)">Clinical</div>
+      <div class="tab" onclick="switchTab(2,this)">EEG / MRI</div>
+      <div class="tab" onclick="switchTab(3,this)">Genetics</div>
+      <div class="tab" onclick="switchTab(4,this)">Family History</div>
+      <div class="tab" onclick="switchTab(5,this)">Mitochondrial</div>
+    </div>
+    <!-- TAB 0 -->
+    <div class="tab-pane active" id="tp-0">
+      <div class="form-grid">
+        <div class="fg"><label>Category *</label><select id="f-category"><option value="">-- Select --</option><option value="N1">N1</option><option value="N2">N2</option><option value="N3">N3</option><option value="N5">N5</option></select></div>
+        <div class="fg"><label>Name *</label><input id="f-name" placeholder="Full patient name"></div>
+        <div class="fg"><label>Age at Enrollment</label><input id="f-age-enroll" type="number" placeholder="Years"></div>
+        <div class="fg"><label>Age at Genetic Test</label><input id="f-age-gen" type="number" placeholder="Years"></div>
+        <div class="fg"><label>Sex</label><select id="f-sex"><option>Male</option><option>Female</option><option>Other</option></select></div>
+        <div class="fg"><label>N Num</label><input id="f-nnum" placeholder="Registry N-Number"></div>
+        <div class="fg"><label>UHID</label><input id="f-uhid" placeholder="Hospital UHID"></div>
+        <div class="fg"><label>Contact No</label><input id="f-contact" placeholder="Phone number"></div>
+        <div class="fg"><label>Unit</label><input id="f-unit" placeholder="Clinical unit"></div>
+        <div class="fg"><label>Place</label><input id="f-place" placeholder="Place of residence"></div>
+      </div>
+    </div>
+    <!-- TAB 1 -->
+    <div class="tab-pane" id="tp-1">
+      <div class="form-grid">
+        <div class="fg"><label>AAO (Age at Onset)</label><input id="f-aao" placeholder="e.g. 3 yrs / 6 months"></div>
+        <div class="fg"><label>Seizure Type</label><input id="f-sztype" placeholder="GTCS, Focal, Myoclonic..."></div>
+        <div class="fg"><label>Seizure Frequency</label><input id="f-szfreq" placeholder="Daily/Weekly/Monthly"></div>
+        <div class="fg"><label>Trigger</label><input id="f-trigger" placeholder="Known triggers"></div>
+        <div class="fg"><label>Sz Outcome</label><input id="f-szout" placeholder="Controlled/Refractory"></div>
+        <div class="fg"><label>Description</label><input id="f-desc" placeholder="Clinical description"></div>
+        <div class="fg"><label>Dev (Development)</label><input id="f-dev" placeholder="Normal/Delayed/Regressed"></div>
+        <div class="fg"><label>Dev Outcome</label><input id="f-devout" placeholder="Developmental outcome"></div>
+        <div class="fg"><label>Cognition</label><input id="f-cog" placeholder="Normal/Mild/Moderate/Severe"></div>
+        <div class="fg"><label>Cog Desc MMSE/IQ</label><input id="f-cogdesc" placeholder="Score/description"></div>
+        <div class="fg"><label>Neurological Comorbidity</label><input id="f-neuro" placeholder="Details"></div>
+        <div class="fg"><label>Psychiatric/Behavioural</label><input id="f-psych" placeholder="Details"></div>
+        <div class="fg"><label>Systemic Comorbidity</label><input id="f-sys" placeholder="Details"></div>
+        <div class="fg"><label>Dysmorphism</label><input id="f-dysm" placeholder="Present/Absent/Details"></div>
+        <div class="fg"><label>Drugs Num</label><input id="f-drugnum" type="number" placeholder="Count"></div>
+        <div class="fg"><label>Drugs Types</label><input id="f-drugtype" placeholder="Drug names"></div>
+        <div class="fg"><label>Lactate</label><input id="f-lact" placeholder="Value/Normal"></div>
+        <div class="fg"><label>Ammonia</label><input id="f-amm" placeholder="Value/Normal"></div>
+        <div class="fg"><label>TMS (Tandem MS)</label><input id="f-tms" placeholder="Result"></div>
+        <div class="fg"><label>Abnormal Metabolite Urine</label><input id="f-metab" placeholder="Details"></div>
+        <div class="fg"><label>Routine Blood</label><input id="f-blood" placeholder="Findings"></div>
+        <div class="fg"><label>Others (Lab)</label><input id="f-others" placeholder="Other investigations"></div>
+      </div>
+    </div>
+    <!-- TAB 2 -->
+    <div class="tab-pane" id="tp-2">
+      <div class="form-grid">
+        <div class="fg"><label>EEG</label><input id="f-eeg" placeholder="EEG findings"></div>
+        <div class="fg"><label>VEEG Done</label><select id="f-veeg"><option>Yes</option><option>No</option></select></div>
+        <div class="fg"><label>VEEG II</label><input id="f-veegii" placeholder="Details"></div>
+        <div class="fg"><label>VEEG Semiology</label><input id="f-veegsem" placeholder="Semiology"></div>
+        <div class="fg"><label>VEEG Ictal</label><input id="f-veegict" placeholder="Ictal findings"></div>
+        <div class="fg"><label>MEG</label><input id="f-meg" placeholder="MEG findings"></div>
+        <div class="fg"><label>MRI</label><input id="f-mri" placeholder="MRI findings"></div>
+        <div class="fg"><label>PET</label><input id="f-pet" placeholder="PET findings"></div>
+        <div class="fg"><label>Duration of Follow-up</label><input id="f-fudu" placeholder="e.g. 24 months"></div>
+      </div>
+    </div>
+    <!-- TAB 3 -->
+    <div class="tab-pane" id="tp-3">
+      <div class="form-grid">
+        <div class="fg"><label>Type of Genetic Test</label><select id="f-testtype"><option>WES</option><option>WGS</option><option>Gene Panel</option><option>Sanger</option><option>Chromosomal Microarray</option><option>Karyotype</option></select></div>
+        <div class="fg"><label>Variant Detected</label><select id="f-vardet"><option>Yes</option><option>No</option></select></div>
+        <div class="fg"><label>Gene# (Transcript)</label><input id="f-gene" placeholder="e.g. SCN1A (NM_001165963)"></div>
+        <div class="fg"><label>Location</label><input id="f-loc" placeholder="e.g. Chr2q24.3"></div>
+        <div class="fg"><label>Variant</label><input id="f-variant" placeholder="c.XXXX (p.XXXX)"></div>
+        <div class="fg"><label>Zygosity</label><select id="f-zyg"><option>Heterozygous</option><option>Homozygous</option><option>Hemizygous</option><option>Compound Heterozygous</option></select></div>
+        <div class="fg"><label>Disease</label><input id="f-disease" placeholder="Associated disease name"></div>
+        <div class="fg"><label>OMIM</label><input id="f-omim" placeholder="OMIM:XXXXXX"></div>
+        <div class="fg"><label>Inheritance</label><select id="f-inh"><option>AD</option><option>AR</option><option>XL</option><option>XLD</option><option>XLR</option><option>De novo</option><option>Mitochondrial</option><option>Unknown</option></select></div>
+        <div class="fg"><label>ACMG Classification</label><select id="f-class"><option>Pathogenic</option><option>Likely Pathogenic</option><option>VUS</option><option>Likely Benign</option><option>Benign</option></select></div>
+        <div class="fg"><label>Basis of Classification</label><input id="f-clasbas" placeholder="PS1, PM2, PP3..."></div>
+        <div class="fg"><label>Type of Variant</label><input id="f-typevar" placeholder="SNV/Indel/CNV/SV"></div>
+        <div class="fg"><label>Type of Variation</label><input id="f-typevar2" placeholder="Missense/Frameshift/Nonsense..."></div>
+        <div class="fg"><label>Minor Allele Frequency</label><input id="f-maf" placeholder="e.g. 0.0001"></div>
+        <div class="fg"><label>Prediction Tools (Deleterious)</label><input id="f-tools" placeholder="SIFT/PolyPhen2/CADD..."></div>
+        <div class="fg"><label>Tools Used</label><input id="f-toolsused" placeholder="List tools"></div>
+        <div class="fg"><label>Conserved Across Species</label><select id="f-conserved"><option>Yes</option><option>No</option><option>NA</option></select></div>
+        <div class="fg"><label>Functional Studies</label><select id="f-func"><option>Done</option><option>Not Done</option><option>Ongoing</option></select></div>
+        <div class="fg"><label>Functional Studies Description</label><input id="f-funcdesc" placeholder="Details if done"></div>
+        <div class="fg"><label>Pretest Diagnosis</label><input id="f-pretest" placeholder="Clinical diagnosis before testing"></div>
+        <div class="fg"><label>Genotype-Phenotype Match</label><input id="f-gpmat" placeholder="Yes/No/Partial"></div>
+        <div class="fg"><label>Impact of Genetic Diagnosis</label><input id="f-impact" placeholder="Changed/Confirmed/New diagnosis"></div>
+        <div class="fg"><label>Modification</label><input id="f-mod" placeholder="Treatment modification"></div>
+        <div class="fg"><label>Follow-up After Modification</label><input id="f-fumod" placeholder="Response/Outcome"></div>
+      </div>
+    </div>
+    <!-- TAB 4 -->
+    <div class="tab-pane" id="tp-4">
+      <div class="form-grid">
+        <div class="fg"><label>Consanguinity</label><select id="f-consang"><option>Yes</option><option>No</option><option>Unknown</option></select></div>
+        <div class="fg"><label>Degree</label><input id="f-degree" placeholder="1st/2nd/3rd degree cousin"></div>
+        <div class="fg"><label>Family History of Epilepsy</label><input id="f-famhx" placeholder="Yes/No/Details"></div>
+        <div class="fg"><label>Suspected Mode of Inheritance</label><input id="f-suspinhe" placeholder="Mode"></div>
+        <div class="fg"><label>Affected Family Members</label><input id="f-affmem" placeholder="Relation and details"></div>
+        <div class="fg"><label>Pedigree</label><input id="f-ped" placeholder="Available/Not Available"></div>
+        <div class="fg"><label>Father Tested</label><select id="f-fattest"><option>Yes</option><option>No</option><option>Deceased</option></select></div>
+        <div class="fg"><label>Father Report</label><input id="f-fatrep" placeholder="Carrier/Non-carrier/Affected"></div>
+        <div class="fg"><label>Mother Tested</label><select id="f-mottest"><option>Yes</option><option>No</option><option>Deceased</option></select></div>
+        <div class="fg"><label>Mother Report</label><input id="f-motrep" placeholder="Carrier/Non-carrier/Affected"></div>
+      </div>
+    </div>
+    <!-- TAB 5 -->
+    <div class="tab-pane" id="tp-5">
+      <div class="form-grid">
+        <div class="fg"><label>Mitochondrial</label><select id="f-mito"><option>Yes</option><option>No</option></select></div>
+        <div class="fg"><label>Abnormality Detected</label><input id="f-mitoabn" placeholder="Yes/No/Details"></div>
+        <div class="fg"><label>Mito Gene</label><input id="f-mitogene" placeholder="MT-gene name"></div>
+        <div class="fg"><label>Ensembl</label><input id="f-ensembl" placeholder="Ensembl ID"></div>
+        <div class="fg"><label>Zygosity (Mito)</label><select id="f-mitozyg"><option>Heteroplasmic</option><option>Homoplasmic</option><option>NA</option></select></div>
+        <div class="fg"><label>cDNA</label><input id="f-cdna" placeholder="c. notation"></div>
+        <div class="fg"><label>Amino Acid</label><input id="f-aa" placeholder="p. notation"></div>
+        <div class="fg"><label>Type of Variation (Mito)</label><input id="f-mitovar" placeholder="Variation type"></div>
+        <div class="fg"><label>Type of Variation (Mito-Reported)</label><input id="f-mitovarrep" placeholder="Reported type"></div>
+        <div class="fg"><label>Classification (Mito)</label><select id="f-mitoclas"><option>Pathogenic</option><option>Likely Pathogenic</option><option>VUS</option><option>Likely Benign</option><option>Benign</option></select></div>
+        <div class="fg"><label>Disease Association</label><input id="f-mitoassoc" placeholder="Associated disease"></div>
+      </div>
+    </div>
+    <div style="margin-top:24px;display:flex;gap:12px;justify-content:flex-end;border-top:1px solid var(--nim-border);padding-top:16px">
+      <button class="btn" style="background:var(--nim-card);color:var(--nim-muted);border:1px solid var(--nim-border)" onclick="closeModal('add-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="savePatient()">💾 Save Patient Record</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ADD USER MODAL -->
+<div class="modal-overlay hidden" id="user-modal">
+<div class="modal-box" style="width:520px">
+  <div class="modal-header">
+    <div class="modal-title">Add New User</div>
+    <button class="modal-close" onclick="closeModal('user-modal')">✕</button>
+  </div>
+  <div class="modal-body">
+    <div class="form-grid-2">
+      <div class="fg"><label>Full Name *</label><input id="u-name" placeholder="Enter full name"></div>
+      <div class="fg"><label>User ID *</label><input id="u-id" placeholder="Login ID"></div>
+      <div class="fg"><label>Password *</label><input id="u-pw" type="password" placeholder="Set password"></div>
+      <div class="fg"><label>Role</label><select id="u-role"><option value="viewer">Viewer</option><option value="doctor">Doctor</option><option value="researcher">Researcher</option><option value="admin">Admin</option></select></div>
+      <div class="fg" style="grid-column:1/-1"><label>Email</label><input id="u-email" placeholder="Email address"></div>
+    </div>
+    <div style="font-size:12px;color:var(--nim-muted);margin-top:12px;background:rgba(255,255,255,.04);padding:10px 12px;border-radius:6px">
+      <b style="color:var(--nim-gold)">Roles:</b> Viewer (read-only) · Doctor (add/edit patients) · Researcher (view/export) · Admin (full access)
+    </div>
+    <div style="margin-top:20px;display:flex;gap:12px;justify-content:flex-end">
+      <button class="btn" style="background:var(--nim-card);color:var(--nim-muted);border:1px solid var(--nim-border)" onclick="closeModal('user-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="addUser()">Add User</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/supabase-client.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
