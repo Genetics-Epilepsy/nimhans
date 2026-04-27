@@ -390,3 +390,49 @@ select.filter-sel:focus{border-color:var(--nim-blue)}
 .btn-x{background:none;border:none;color:var(--nim-muted);cursor:pointer;font-size:16px;padding:4px 8px;border-radius:6px}
 .btn-x:hover{background:rgba(210,74,61,.08);color:var(--nim-danger)}
 
+/* --- TABLE SCROLLING & ALIGNMENT --- */
+.tbl-wrap {
+    width: 100%;
+    overflow-x: auto; /* Critical: Enables horizontal scrolling */
+    display: block;
+    border: 1px solid var(--nim-border);
+    background: var(--nim-card);
+    border-radius: 8px;
+    margin-top: 15px;
+}
+
+.data-tbl {
+    width: 100%;
+    min-width: 1600px; /* Forces the table to stay wide for all 17+ columns */
+    border-collapse: collapse;
+}
+
+.data-tbl th, .data-tbl td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid var(--nim-border);
+    white-space: nowrap; /* Keeps data on one line */
+}
+
+/* --- HEADER FILTER STYLES --- */
+.header-filter {
+    display: block;
+    width: 100%;
+    margin-top: 8px;
+    padding: 6px 8px;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid var(--nim-border);
+    color: var(--nim-gold);
+    font-size: 11px;
+    border-radius: 4px;
+    outline: none;
+}
+
+.header-filter:focus {
+    border-color: var(--nim-gold);
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.header-filter::placeholder {
+    color: var(--nim-muted);
+}

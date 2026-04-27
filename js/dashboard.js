@@ -555,3 +555,24 @@
   window.shortGene = shortGene;
   window.parseAaoYears = parseAaoYears;
 })();
+/**
+ * Filters the variants table by a specific column
+ * @param {number} colIndex - The index of the TD (0-based)
+ * @param {string} val - The search string
+ */
+window.filterByColumn = function(colIndex, val) {
+    const tbody = document.getElementById('var-body');
+    if (!tbody) return;
+    
+    const rows = tbody.getElementsByTagName('tr');
+    const term = val.toLowerCase().trim();
+
+    for (let i = 0; i < rows.length; i++) {
+        const td = rows[i].getElementsByTagName('td')[colIndex];
+        if (td) {
+            const txt = td.textContent || td.innerText;
+            // Show row if it matches, otherwise hide
+            rows[i].style.display = txt.toLowerCase().includes(term) ? "" : "none";
+        }
+    }
+};
