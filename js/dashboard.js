@@ -576,3 +576,34 @@ window.filterByColumn = function(colIndex, val) {
         }
     }
 };
+// Function to populate dropdowns from your Excel data
+function initDashboardFilters(records) {
+    const geneSel = document.getElementById('dash-gene-filter');
+    const diseaseSel = document.getElementById('dash-disease-filter');
+    
+    const uniqueGenes = [...new Set(records.map(r => r.Gene).filter(Boolean))].sort();
+    const uniqueDiseases = [...new Set(records.map(r => r.Disease).filter(Boolean))].sort();
+
+    uniqueGenes.forEach(g => {
+        geneSel.add(new Option(g, g));
+    });
+
+    uniqueDiseases.forEach(d => {
+        diseaseSel.add(new Option(d, d));
+    });
+}
+
+// Function to refresh the dashboard when filters change
+function updateDashboardFilters() {
+    const selectedGene = document.getElementById('dash-gene-filter').value;
+    const selectedDisease = document.getElementById('dash-disease-filter').value;
+
+    const filteredRecords = window.fullRegistry.filter(r => {
+        const matchGene = !selectedGene || r.Gene === selectedGene;
+        const matchDisease = !selectedDisease || r.Disease === selectedDisease;
+        return matchGene && matchDisease;
+    });
+
+    // Re-run your chart rendering functions with the filtered list
+    renderInfographics(filteredRecords); 
+}
